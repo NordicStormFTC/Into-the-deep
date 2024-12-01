@@ -61,6 +61,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.google.blocks.ftcrobotcontroller.ProgrammingWebHandlers;
 import com.google.blocks.ftcrobotcontroller.runtime.BlocksOpMode;
 import com.qualcomm.ftccommon.ClassManagerFactory;
@@ -272,7 +273,7 @@ public class FtcRobotControllerActivity extends Activity
     if (enforcePermissionValidator()) {
       return;
     }
-
+    //FtcDashboard.start(this);
     RobotLog.onApplicationStart();  // robustify against onCreate() following onDestroy() but using the same app instance, which apparently does happen
     RobotLog.vv(TAG, "onCreate()");
     ThemedActivity.appAppThemeToActivity(getTag(), this); // do this way instead of inherit to help AppInventor
@@ -331,6 +332,7 @@ public class FtcRobotControllerActivity extends Activity
           }
         });
         popupMenu.inflate(R.menu.ftc_robot_controller);
+       // FtcDashboard.populateMenu(FtcRobotControllerActivity.this, popupMenu.getMenu());
         AnnotatedHooksClassFilter.getInstance().callOnCreateMenuMethods(
             FtcRobotControllerActivity.this, popupMenu.getMenu());
         popupMenu.show();
@@ -466,7 +468,7 @@ public class FtcRobotControllerActivity extends Activity
   protected void onDestroy() {
     super.onDestroy();
     RobotLog.vv(TAG, "onDestroy()");
-
+   // FtcDashboard.stop(this);
     shutdownRobot();  // Ensure the robot is put away to bed
     if (callback != null) callback.close();
 
@@ -525,6 +527,7 @@ public class FtcRobotControllerActivity extends Activity
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.ftc_robot_controller, menu);
     AnnotatedHooksClassFilter.getInstance().callOnCreateMenuMethods(this, menu);
+    //FtcDashboard.populateMenu(this, menu);
     return true;
   }
 
@@ -691,6 +694,8 @@ public class FtcRobotControllerActivity extends Activity
       }
     });
 
+    //FtcDashboard.attachWebServer(this,service.getWebServer().getWebHandlerManager());
+
     AnnotatedHooksClassFilter.getInstance().callWebHandlerRegistrarMethods(this,
         service.getWebServer().getWebHandlerManager());
   }
@@ -739,6 +744,8 @@ public class FtcRobotControllerActivity extends Activity
     AndroidBoard.showErrorIfUnknownControlHub();
 
     AnnotatedHooksClassFilter.getInstance().callOnCreateEventLoopMethods(this, eventLoop);
+
+    //FtcDashboard.attachEventLoop(this, eventLoop);
   }
 
   protected OpModeRegister createOpModeRegister() {
