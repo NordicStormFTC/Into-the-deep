@@ -13,11 +13,14 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.teamcode.nordicStorm.actionClasses.DriveActions;
+import org.firstinspires.ftc.teamcode.nordicStorm.actionClasses.LLActions;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.opencv.core.Mat;
@@ -34,24 +37,53 @@ public class TeleOp extends LinearOpMode {
     //private final VisionSubSystem.LimeLightActions limeLight = driveTrain.getLimeLightActions();
 
     private FtcDashboard dash = FtcDashboard.getInstance();
-    private DriveTrain driveTrain;
-//    private Telemetry dashTelemetry = dash.getTelemetry();
+    private DriveActions drive;
+    private final Pose2d startingPos = new Pose2d(0,0,0);
+    private LLActions llActions;
+    private List<Action> runningActions = new ArrayList<>();
+    private boolean doGpDrive = true;
+   // private Arm arm;
+    //    private Telemetry dashTelemetry = dash.getTelemetry();
 
 //    private List<Action> runningActions = new ArrayList<>();
 
 
     @Override
     public void runOpMode() {
+        drive = new DriveActions(hardwareMap,startingPos,gamepad1);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         dash.updateConfig();
+
+        llActions = new LLActions(hardwareMap, startingPos, gamepad1);
         TelemetryPacket p = new TelemetryPacket();
 
         waitForStart();
         while (!isStopRequested() && opModeIsActive()) {
            // driveTrain = new DriveTrain(hardwareMap, new Pose2d(0, 0, 0), gamepad1, gamepad2);
-            p.put("hello", 2);
+            p.put("pos", drive.driveBase.updatePoseEstimate().component1());
             dash.sendTelemetryPacket(p);
+            dash.updateConfig();
+            telemetry.update();
 
+            if(doGpDrive){
+                runningActions.add(drive.gamepadDrive());
+            }
+            if(gamepad1.a){
+                doGpDrive = false;
+                runningActions.add(llActions.chaseThing());
+
+            } else if(!gamepad1.a){
+                doGpDrive = true;
+            }
+
+
+            List<Action> newActions = new ArrayList<>();
+            for(Action action : runningActions){
+                if(action.run(new TelemetryPacket())){
+                    newActions.add(action);
+                }
+            }
+            runningActions = newActions;
 
             // Java bitmap class/covert pixydata to botmap
             //  dash.sendImage();
@@ -62,7 +94,6 @@ public class TeleOp extends LinearOpMode {
 //                    .lineToXConstantHeading(10)
 //                    .build();
 //
-            // Actions.runBlocking(new InstantAction(() -> driveTrain.driveBase.leftFront.setPower(1));
         }
 //        // updated based on gamepads
 //
@@ -79,13 +110,5 @@ public class TeleOp extends LinearOpMode {
 //
 //        dash.sendTelemetryPacket(packet);
 
-    }
-
-    public class TeleOpAction implements Action {
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            return false;
-        }
     }
 }
