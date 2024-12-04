@@ -9,9 +9,14 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.MecanumKinematics;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Time;
+import com.acmerobotics.roadrunner.Twist2d;
+import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.Vector2dDual;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,6 +24,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.teamcode.Localizer;
+import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.nordicStorm.actionClasses.DriveActions;
 import org.firstinspires.ftc.teamcode.nordicStorm.actionClasses.LLActions;
 import org.firstinspires.ftc.vision.VisionProcessor;
@@ -56,6 +63,11 @@ public class TeleOp extends LinearOpMode {
 
         llActions = new LLActions(hardwareMap, startingPos, gamepad1);
         TelemetryPacket p = new TelemetryPacket();
+
+        MecanumKinematics kin = drive.driveBase.kinematics;
+        Localizer loc = drive.driveBase.localizer;
+        Twist2d twist = loc.update().value();
+        Pose2d pos = new Pose2d(twist.line, twist.angle);
 
         waitForStart();
         while (!isStopRequested() && opModeIsActive()) {

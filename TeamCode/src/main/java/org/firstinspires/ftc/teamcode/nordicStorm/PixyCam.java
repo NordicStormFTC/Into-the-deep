@@ -191,53 +191,6 @@ public class PixyCam extends I2cDeviceSynchDeviceWithParameters<I2cDeviceSynch, 
         return (b1 & 0xff) | (b2 & 0xff);
     }
 
-    /// all the methods after this *besides the override ones* are total garbage
-    public byte readPixyAtByteIndex(int i) {
-        I2cDeviceSynch.ReadWindow readWindow = new I2cDeviceSynch.ReadWindow(1, 26, I2cDeviceSynch.ReadMode.REPEAT);
-        this.deviceClient.setReadWindow(readWindow);
-        byte[] rawData = this.deviceClient.read(readWindow.getRegisterFirst(), readWindow.getRegisterCount());
-        return rawData[i];
-    }
-
-    public int cvt(byte lower, byte upper) {
-        return (((int) upper & 0xff) << 8) | ((int) lower & 0xff);
-    }
-
-    public byte getSpecificByte8(int b) {
-        return this.deviceClient.read8(b);
-    }
-
-    public byte[] getSpecificByte(int b) {
-        return this.deviceClient.read(b);
-    }
-
-
-    public ArrayList<Byte> readPixy() {
-        ArrayList<Byte> rawData = new ArrayList<>();
-        for (int i = 0x50; i < 0xf0; i++) {
-            rawData.add(this.deviceClient.read8(i));
-        }
-        return rawData;
-//        I2cDeviceSynch.ReadWindow readWindow = new I2cDeviceSynch.ReadWindow(1, 26, I2cDeviceSynch.ReadMode.BALANCED);
-//        this.deviceClient.setReadWindow(readWindow);
-//        return this.deviceClient.read(readWindow.getRegisterFirst(), readWindow.getRegisterCount());
-    }
-
-    public byte[] pixyWindow() {
-        I2cDeviceSynch.ReadWindow readWindow = new I2cDeviceSynch.ReadWindow(1, 26, I2cDeviceSynch.ReadMode.ONLY_ONCE);
-        this.deviceClient.setReadWindow(readWindow);
-        return this.deviceClient.read(readWindow.getRegisterFirst(), readWindow.getRegisterCount());
-
-    }
-
-    public byte[] pixyWindowDirect(int a, int b) {
-//        I2cDeviceSynch.ReadWindow readWindow = new I2cDeviceSynch.ReadWindow(a, b, I2cDeviceSynch.ReadMode.BALANCED);
-//        this.deviceClient.setReadWindow(readWindow);
-        return this.deviceClient.read(a, b);
-
-    }
-
-
     @Override
     public Manufacturer getManufacturer() {
         return Manufacturer.Other;
@@ -252,7 +205,6 @@ public class PixyCam extends I2cDeviceSynchDeviceWithParameters<I2cDeviceSynch, 
     protected boolean internalInitialize(@NonNull PixyCam.PixyCamParams pixyCamParams) {
         this.parameters = pixyCamParams.clone();
         deviceClient.setI2cAddress(parameters.i2cAddr);
-
         return true;
     }
 }
