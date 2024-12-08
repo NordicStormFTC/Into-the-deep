@@ -18,6 +18,8 @@ import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -49,6 +51,7 @@ public class TeleOp extends LinearOpMode {
     private LLActions llActions;
     private List<Action> runningActions = new ArrayList<>();
     private boolean doGpDrive = true;
+    private AdafruitBNO055IMU externalIMU;
    // private Arm arm;
     //    private Telemetry dashTelemetry = dash.getTelemetry();
 
@@ -57,6 +60,7 @@ public class TeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        initIMU();
         drive = new DriveActions(hardwareMap,startingPos,gamepad1);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         dash.updateConfig();
@@ -122,5 +126,17 @@ public class TeleOp extends LinearOpMode {
 //
 //        dash.sendTelemetryPacket(packet);
 
+    }
+
+    public void initIMU(){
+        externalIMU = hardwareMap.get(AdafruitBNO055IMU.class, "adafruit");
+
+        BNO055IMU.Parameters p = externalIMU.getParameters();
+        p.accelBandwidth = BNO055IMU.AccelBandwidth.HZ62_5;
+        p.accelRange = BNO055IMU.AccelRange.G4;
+        p.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        p.mode = BNO055IMU.SensorMode.ACCONLY;
+
+        externalIMU.initialize(p);
     }
 }

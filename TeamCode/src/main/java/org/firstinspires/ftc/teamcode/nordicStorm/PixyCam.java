@@ -161,7 +161,7 @@ public class PixyCam extends I2cDeviceSynchDeviceWithParameters<I2cDeviceSynch, 
         return detectedBlocks;
     }
 
-    public PixyBlock bytesToBlock(byte[] bytes) {
+    public PixyBlock bytesToBlock(@NonNull byte[] bytes) {
         PixyBlock pixyBlock = new PixyBlock();
         pixyBlock.sync = bytesToInt(bytes[1], bytes[0]);
         pixyBlock.checksum = bytesToInt(bytes[3], bytes[2]);
