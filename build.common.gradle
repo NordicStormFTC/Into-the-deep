@@ -21,11 +21,6 @@ apply plugin: 'com.android.application'
 
 android {
 
-    externalNativeBuild {
-        cmake {
-            version '3.31.1' // was 3.22.1
-        }
-    }
     compileSdkVersion 30
 
     signingConfigs {
@@ -114,7 +109,7 @@ android {
     packagingOptions {
         pickFirst '**/*.so'
     }
-    ndkVersion '27.0.12077973'
+    ndkVersion '21.3.6528147'
 }
 
 repositories {
