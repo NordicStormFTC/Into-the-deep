@@ -1,7 +1,12 @@
-package org.firstinspires.ftc.teamcode.nordicStorm;
+package org.firstinspires.ftc.teamcode.nordicStorm.langskip;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
+
+import java.lang.reflect.Method;
 
 /**
  The thought here is that the vision subsystem will produce data for the
@@ -11,11 +16,26 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  besides one object of each subsystem.
  */
 public class ArmSubsystem extends VisionSubsystem {
+
     private final DcMotor arm;
-    public ArmSubsystem(HardwareMap hardwareMap, OpType opType) {
-        super(hardwareMap, opType);
+
+    private final Servo grabby;
+
+    private final Servo elbow;
+
+    /**
+     * using a package private constructor to
+     * maintain immutability.
+     * @param hardwareMap publicly instantiate me in Langskip!
+     */
+
+     ArmSubsystem(HardwareMap hardwareMap) {
+        super(hardwareMap);
         arm = hardwareMap.get(DcMotor.class, "arm");
+        grabby = hardwareMap.get(Servo.class, "grabby");
+        elbow = hardwareMap.get(Servo.class, "elbow");
     }
+
     public void setArmUp(double target) {
         final double posStamp = arm.getCurrentPosition();
 
@@ -24,5 +44,13 @@ public class ArmSubsystem extends VisionSubsystem {
 
         double power = (1 * error) + (1 * dError);
         arm.setPower(power);
+    }
+
+    public double getArmPosition(){
+         return arm.getCurrentPosition();
+    }
+
+    public void setArmPower(double power){
+         arm.setPower(power);
     }
 }

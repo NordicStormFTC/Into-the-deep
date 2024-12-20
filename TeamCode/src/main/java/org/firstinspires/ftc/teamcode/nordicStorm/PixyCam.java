@@ -71,7 +71,7 @@ public class PixyCam extends I2cDeviceSynchDeviceWithParameters<I2cDeviceSynch, 
         /// pixy2 has 26 bytes for us to read through
         byte[] bytes = new byte[26];
 
-        /// this sets the FTC I2C Device, in this case pixys, read window.
+        /// this sets the I2C device, in this case pixys, read window.
         I2cDeviceSynch.ReadWindow readWindow = new I2cDeviceSynch.ReadWindow(0, bytes.length, I2cDeviceSynch.ReadMode.ONLY_ONCE);
         this.deviceClient.setReadWindow(readWindow);
 

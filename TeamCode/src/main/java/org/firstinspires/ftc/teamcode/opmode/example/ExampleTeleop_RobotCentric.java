@@ -3,10 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode.example;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.MathFunctions;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Vector;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
-import org.firstinspires.ftc.teamcode.config.subsystem.ClawSubsystem;
 
 /**
  * This is an example teleop that showcases movement and control of two servos and robot-centric driving.
@@ -18,7 +15,6 @@ import org.firstinspires.ftc.teamcode.config.subsystem.ClawSubsystem;
 @TeleOp(name = "Example Robot-Centric Teleop", group = "Examples")
 public class ExampleTeleop_RobotCentric extends OpMode {
     private Follower follower;
-    private ClawSubsystem claw;
     private final Pose startPose = new Pose(0,0,0);
 
     /** This method is call once when init is played, it initializes the follower and subsystems **/
@@ -27,7 +23,6 @@ public class ExampleTeleop_RobotCentric extends OpMode {
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
 
-        claw = new ClawSubsystem(hardwareMap);
     }
 
     /** This method is called continuously after Init while waiting to be started. **/
@@ -58,22 +53,18 @@ public class ExampleTeleop_RobotCentric extends OpMode {
 
         /* Open claw on Left Bumper Press */
         if (gamepad1.left_bumper) {
-            claw.openClaw();
         }
 
         /* Close claw on Right Bumper Press */
         if (gamepad1.right_bumper) {
-            claw.closeClaw();
         }
 
         /* Ground Claw Pivot Position on A Press */
         if (gamepad1.a) {
-            claw.groundClaw();
         }
 
         /* Scoring Claw Pivot Position on B Press */
         if (gamepad1.b) {
-            claw.scoringClaw();
         }
 
         /* This could be paired with a PIDF to set the target position of the lift in teleop.
@@ -96,8 +87,7 @@ public class ExampleTeleop_RobotCentric extends OpMode {
         telemetry.addData("Heading in Degrees", Math.toDegrees(follower.getPose().getHeading()));
 
         /* Telemetry Outputs of our ClawSubsystem */
-        telemetry.addData("Grab Position", claw.getGrabPosition());
-        telemetry.addData("Pivot Position", claw.getPivotPosition());
+
 
         /* Update Telemetry to the Driver Hub */
         telemetry.update();

@@ -1,0 +1,31 @@
+
+
+                CH = REV control hub
+                EH = REV expansion hub
+
+
+            ("front left") CH port 0 ---------------- CH port 1 ("front right")
+                |               "lime" CH USB 3.0                    |
+                |                                                    |
+                |                                                    |
+                |                                                    |
+                |                                                    |
+                |       "par1"                "par2"                 |
+                |       EH port 0           EH port 1                |
+                |                                                    |
+                |                "perp" EH port 2                    |
+                |                                                    |
+                |                                                    |
+                |                                                    |
+                |               "arm" EH port 3                      |
+                |                                                    |
+            ("back left") CH port 2 ------------------ CH port 3 ("back right")
+
+                                "pixy" EH I2c port 0
+
+                                REV IMU "imu" CH I2c port 0
+
+
+par1 and par2 ar ethe parallel odometry pods
+perp is the perpendicular pod
+
