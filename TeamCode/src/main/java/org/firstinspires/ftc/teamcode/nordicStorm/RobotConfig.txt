@@ -26,6 +26,6 @@
                                 REV IMU "imu" CH I2c port 0
 
 
-par1 and par2 ar ethe parallel odometry pods
-perp is the perpendicular pod
+par1 and par2 ar ethe parallel odometry pods and need to be reversed in code to go up when moved forwards
+perp is the perpendicular pod and naturally will go down when strafing right
 

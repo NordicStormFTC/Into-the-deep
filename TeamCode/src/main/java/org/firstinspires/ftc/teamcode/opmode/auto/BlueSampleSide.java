@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 public class BlueSampleSide extends OpMode {
 
-    private Langskip robot;
+    private Langskip langskip;
     private Timer pathTimer, actionTimer, opmodeTimer;
 
     /**
@@ -29,8 +29,6 @@ public class BlueSampleSide extends OpMode {
      * used for the arm subsystem
      */
     private PIDFController pidfController;
-
-    private double targetArmPosition = 0;
 
     /**
      * Start Pose of our robot
@@ -54,15 +52,14 @@ public class BlueSampleSide extends OpMode {
      **/
     @Override
     public void init() {
-        pidfController = new PIDFController(new CustomPIDFCoefficients(0, 0, 0, 0));
         pathTimer = new Timer();
         opmodeTimer = new Timer();
 
         opmodeTimer.resetTimer();
 
-        robot = new Langskip(hardwareMap);
-        robot.follower.setStartingPose(startPose);
-
+        langskip = new Langskip(hardwareMap);
+        langskip.follower.setStartingPose(startPose);
+        langskip.armSubsystem.setArmPIDF(0.01,0,0.01,0.01);
         buildPaths();
     }
 
@@ -93,7 +90,8 @@ public class BlueSampleSide extends OpMode {
 
                 if (true) {
                     //do thing
-                    robot.follower.setPose(new Pose(robot.visionSubsystem.getX(), robot.visionSubsystem.getY()));
+                    langskip.armSubsystem.setTarget(10);
+                    langskip.follower.setPose(new Pose(langskip.visionSubsystem.getX(), langskip.visionSubsystem.getY()));
                     setPathState(2);
                 }
                 break;
@@ -135,19 +133,19 @@ public class BlueSampleSide extends OpMode {
      **/
     @Override
     public void loop() {
-        pidfController.updatePosition(robot.armSubsystem.getArmPosition());
-        pidfController.setTargetPosition(targetArmPosition);
-        double power = pidfController.runPIDF();
-        robot.armSubsystem.setArmPower(power);
+
+        langskip.armSubsystem.runArm();
+       
         // These loop the movements of the robot
-        robot.follower.update();
+        langskip.follower.update();
         autonomousPathUpdate();
+
 
         // Feedback to Driver Hub
         telemetry.addData("path state", pathState);
-        telemetry.addData("x", robot.follower.getPose().getX());
-        telemetry.addData("y", robot.follower.getPose().getY());
-        telemetry.addData("heading", robot.follower.getPose().getHeading());
+        telemetry.addData("x", langskip.follower.getPose().getX());
+        telemetry.addData("y", langskip.follower.getPose().getY());
+        telemetry.addData("heading", langskip.follower.getPose().getHeading());
         telemetry.update();
     }
 

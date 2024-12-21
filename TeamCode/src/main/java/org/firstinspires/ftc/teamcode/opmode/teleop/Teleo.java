@@ -1,49 +1,47 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.nordicStorm.langskip.RobotConstants;
-import org.firstinspires.ftc.teamcode.pedroPathing.util.CustomPIDFCoefficients;
-import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDFController;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.PoseUpdater;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.localizers.ThreeWheelLocalizer;
 
 @TeleOp
 @Config
 public class Teleo extends LinearOpMode {
+    private PoseUpdater poseUpdater;
 
-    private DcMotor motor;
-    private PIDFController pidf;
-
-    public static double p = 0;
-    public static double i = 0;
-    public static double d = 0;
-    public static double f = 0;
-
-    public static double target = 0;
+    private DcMotorEx deadWheel;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        motor = hardwareMap.get(DcMotor.class, "arm");
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        pidf = new PIDFController(new CustomPIDFCoefficients(p, i, d, f));
+        ThreeWheelLocalizer localizer = new ThreeWheelLocalizer(hardwareMap);
+
+        deadWheel = hardwareMap.get(DcMotorEx.class, "par1");
+
         waitForStart();
         while(opModeIsActive()){
-            if(target > 10 || target < -10){
-                throw new RuntimeException("IF you do that ur arm will literaly implode");
+            poseUpdater = new PoseUpdater(hardwareMap, localizer);
+            poseUpdater.update();
+            telemetry.addData("Encoderex lives?", deadWheel.getVelocity());
+
+            if(poseUpdater == null){
+                telemetry.addLine("null localizer");
+            } else {
+                telemetry.addLine("not null localizer");
             }
-            pidf.setCoefficients(new CustomPIDFCoefficients(p, i, d, f));
-            pidf.updatePosition(motor.getCurrentPosition());
-            pidf.setTargetPosition(target);
-            double power = pidf.runPIDF();
-            telemetry.addData("motor",motor.getCurrentPosition());
-            motor.setPower(power);
-            telemetry.addData("p", pidf.P());
+
+            if(poseUpdater.getPose().equals(null)){
+                telemetry.addLine("Null x");
+            } else {
+                telemetry.addLine("not .equals null");
+            }
+
+            telemetry.addData("acceleration", poseUpdater.getAcceleration().getMagnitude());
+            telemetry.addData("X", poseUpdater.getPose().getX());
+            poseUpdater.update();
             telemetry.update();
         }
     }

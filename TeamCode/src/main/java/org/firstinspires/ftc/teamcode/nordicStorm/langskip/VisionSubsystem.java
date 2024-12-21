@@ -6,7 +6,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.nordicStorm.PixyCam;
+import org.firstinspires.ftc.teamcode.nordicStorm.pixy.PixyCam;
 
 /**
  * The thought here is that the vision subsystem will produce data for the
@@ -19,7 +19,7 @@ public class VisionSubsystem extends Langskip {
 
     private final Limelight3A limeLight;
 
-    private final PixyCam pixy;
+    //private final PixyCam pixy;
 
     public LLResult results;
 
@@ -32,7 +32,7 @@ public class VisionSubsystem extends Langskip {
     VisionSubsystem(@NonNull HardwareMap hardwareMap) {
         super(hardwareMap);
 
-        pixy = hardwareMap.get(PixyCam.class, "pixy");
+        //pixy = hardwareMap.get(PixyCam.class, "pixy");
         limeLight = hardwareMap.get(Limelight3A.class, "lime");
     }
 

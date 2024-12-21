@@ -26,7 +26,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Drawing;
  * @version 1.0, 5/6/2024
  */
 @Config
-@Autonomous(name = "Turn Localizer Tuner", group = "Autonomous Pathing Tuning")
+//@Autonomous(name = "Turn Localizer Tuner", group = "Autonomous Pathing Tuning")
+@Autonomous
 public class TurnTuner extends OpMode {
     private PoseUpdater poseUpdater;
     private DashboardPoseTracker dashboardPoseTracker;
@@ -59,7 +60,6 @@ public class TurnTuner extends OpMode {
     @Override
     public void loop() {
         poseUpdater.update();
-
         telemetryA.addData("total angle", poseUpdater.getTotalHeading());
         telemetryA.addLine("The multiplier will display what your turn ticks to inches should be to scale your current angle to " + ANGLE + " radians.");
         telemetryA.addData("multiplier", ANGLE / (poseUpdater.getTotalHeading() / poseUpdater.getLocalizer().getTurningMultiplier()));
@@ -67,5 +67,6 @@ public class TurnTuner extends OpMode {
         Drawing.drawPoseHistory(dashboardPoseTracker, "#4CAF50");
         Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
         Drawing.sendPacket();
+        poseUpdater.update();
     }
 }

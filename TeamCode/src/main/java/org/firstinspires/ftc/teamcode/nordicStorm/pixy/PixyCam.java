@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.nordicStorm;
+package org.firstinspires.ftc.teamcode.nordicStorm.pixy;
 
 import androidx.annotation.NonNull;
 
@@ -7,9 +7,6 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchDeviceWithParameters;
 import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
 import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
-
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.VisionProcessor;
 
 import java.util.ArrayList;
 
@@ -29,9 +26,7 @@ public class PixyCam extends I2cDeviceSynchDeviceWithParameters<I2cDeviceSynch, 
     /// the default address for Pixy2s I2C interface is 0x54
     static final I2cAddr DEFAULT_ADDRESS = I2cAddr.create7bit(0x54);
 
-
     public ArrayList<PixyBlock> detectedBlocks = new ArrayList<>();
-
 
     public static final int BLOCK_SIZE = 14;
 
@@ -57,8 +52,6 @@ public class PixyCam extends I2cDeviceSynchDeviceWithParameters<I2cDeviceSynch, 
         this.deviceClient.engage();
     }
 
-    
-
     /**
      * @return an updated list of all "pixy block" objects registered by the camera
      */
@@ -77,7 +70,6 @@ public class PixyCam extends I2cDeviceSynchDeviceWithParameters<I2cDeviceSynch, 
 
         ///now we read through the bytes
         bytes = this.deviceClient.read(readWindow.getRegisterFirst(), readWindow.getRegisterCount());
-
 
         int index = 0;
         for (; index < bytes.length - 1; ++index) {
@@ -118,7 +110,7 @@ public class PixyCam extends I2cDeviceSynchDeviceWithParameters<I2cDeviceSynch, 
                     sb.append(temp[tempOffset] + ", ");
                 }
 
-                PixyBlock block = bytesToBlock(temp);
+                PixyBlock block = PixyUtils.bytesToBlock(temp);
 
                 //Added so blocks are only added if their signature is 1 to remove noise from signal
                 if (block.signature == 1) {
@@ -161,35 +153,6 @@ public class PixyCam extends I2cDeviceSynchDeviceWithParameters<I2cDeviceSynch, 
         return detectedBlocks;
     }
 
-    public PixyBlock bytesToBlock(@NonNull byte[] bytes) {
-        PixyBlock pixyBlock = new PixyBlock();
-        pixyBlock.sync = bytesToInt(bytes[1], bytes[0]);
-        pixyBlock.checksum = bytesToInt(bytes[3], bytes[2]);
-
-
-        pixyBlock.signature = orBytes(bytes[5], bytes[4]);
-        pixyBlock.centerX = ((((int) bytes[7] & 0xff) << 8) | ((int) bytes[6] & 0xff));
-        pixyBlock.centerY = ((((int) bytes[9] & 0xff) << 8) | ((int) bytes[8] & 0xff));
-        pixyBlock.width = ((((int) bytes[11] & 0xff) << 8) | ((int) bytes[10] & 0xff));
-        pixyBlock.height = ((((int) bytes[13] & 0xff) << 8) | ((int) bytes[12] & 0xff));
-        return pixyBlock;
-    }
-
-    public int bytesToInt(int b1, int b2) {
-        if (b1 < 0)
-            b1 += 256;
-
-        if (b2 < 0)
-            b2 += 256;
-
-        int intValue = b1 * 256;
-        intValue += b2;
-        return intValue;
-    }
-
-    public int orBytes(byte b1, byte b2) {
-        return (b1 & 0xff) | (b2 & 0xff);
-    }
 
     @Override
     public Manufacturer getManufacturer() {

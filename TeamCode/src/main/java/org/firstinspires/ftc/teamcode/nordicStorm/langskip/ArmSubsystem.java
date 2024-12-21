@@ -4,16 +4,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
-
-import java.lang.reflect.Method;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.CustomPIDFCoefficients;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDFController;
 
 /**
- The thought here is that the vision subsystem will produce data for the
- hardware to react to. Hence the vision subsystem extends the main robot class 'Langskip'
- and the arm subsystem inherits the data produced by the vision subsystem. The main
- robot class carries only the subsystems to be used in opmodes, and holds no information
- besides one object of each subsystem.
+ * The thought here is that the vision subsystem will produce data for the
+ * hardware to react to. Hence the vision subsystem extends the main robot class 'Langskip'
+ * and the arm subsystem inherits the data produced by the vision subsystem. The main
+ * robot class carries only the subsystems to be used in opmodes, and holds no information
+ * besides one object of each subsystem.
  */
 public class ArmSubsystem extends VisionSubsystem {
 
@@ -23,34 +22,82 @@ public class ArmSubsystem extends VisionSubsystem {
 
     private final Servo elbow;
 
+    public double target = 0; // the arm can only go in range [10,10]
+
+    /**
+     * we use one class private PIDF to be used by the arm subsystem.
+     * again you could instantiate a new PIDF controller every OpMode
+     * you run your arm in, but this seems cleaner.
+     */
+    private final PIDFController armPIDF;
+
     /**
      * using a package private constructor to
-     * maintain immutability.
-     * @param hardwareMap publicly instantiate me in Langskip!
+     * maintain immutability. Publicly instantiate me as final in Langskip!
+     *
+     * @param hardwareMap hardware map for the arm and servos.
      */
 
-     ArmSubsystem(HardwareMap hardwareMap) {
+    ArmSubsystem(HardwareMap hardwareMap) {
         super(hardwareMap);
         arm = hardwareMap.get(DcMotor.class, "arm");
         grabby = hardwareMap.get(Servo.class, "grabby");
         elbow = hardwareMap.get(Servo.class, "elbow");
+
+        armPIDF = new PIDFController(new CustomPIDFCoefficients(0, 0, 0, 0));
     }
 
-    public void setArmUp(double target) {
-        final double posStamp = arm.getCurrentPosition();
+    /**
+     * call this any time to set the arms target position
+     *
+     * @param target target position
+     */
+    public void setTarget(double target) {
+        this.target = target;
 
-        double error = target - posStamp;
-        double dError = (arm.getCurrentPosition() - posStamp) / 0.1;
+        if (target > RobotConstants.maxArmPose || target < RobotConstants.minArmPose) {
+            throw new RuntimeException("NO! BAD! The arm can only go from [10, 10]");
+        }
+    }
 
-        double power = (1 * error) + (1 * dError);
+    /**
+     * this is the function to be called in loop
+     * it will set power once every time you call it,
+     * so again, it must be put in the loop of the OpMode
+     */
+    public void runArm() {
+        armPIDF.updatePosition(arm.getCurrentPosition());
+        armPIDF.setTargetPosition(target);
+        double power = armPIDF.runPIDF();
         arm.setPower(power);
     }
 
-    public double getArmPosition(){
-         return arm.getCurrentPosition();
+
+    /**
+     * you could do this in the OpMode, however it seems
+     * cleaner to do it here. this sets the PIDF coefficiants
+     */
+    public void setArmPIDF(double p, double i, double d, double f) {
+        armPIDF.setCoefficients(new CustomPIDFCoefficients(p, i, d, f));
+        double[] pidCoefficients = {p,i,d,f};
+
+        /*
+         * checks for any silly mistakes
+         */
+        for(double term : pidCoefficients){
+            if(term < 0){
+                throw new RuntimeException("NO! BAD! PID Coefficients cannot be negative");
+            }
+        }
+        if (p > 0.1) {
+            throw new RuntimeException("NO! BAD! The arm P term should not be higher than 0.1!!");
+        }
+        if(i > 0){
+            throw new RuntimeException("NO! DO NOT USE AN I TERM FOR TUNING THE ARM!");
+        }
     }
 
-    public void setArmPower(double power){
-         arm.setPower(power);
+    public double getArmPosition() {
+        return arm.getCurrentPosition();
     }
 }

@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.localization;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.localizers.DriveEncoderLocalizer;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.localizers.ThreeWheelIMULocalizer;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.localizers.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.localizers.TwoWheelLocalizer;
@@ -23,7 +26,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Vector;
 public class PoseUpdater {
     private HardwareMap hardwareMap;
 
-    private IMU imu;
+    //private IMU imu;
 
     private Localizer localizer;
 
@@ -52,15 +55,15 @@ public class PoseUpdater {
      * @param hardwareMap the HardwareMap
      * @param localizer the Localizer
      */
-    public PoseUpdater(HardwareMap hardwareMap, Localizer localizer) {
+    public PoseUpdater(HardwareMap hardwareMap, @NonNull Localizer localizer) {
         this.hardwareMap = hardwareMap;
 
-        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
+//        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
+//            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+//        }
 
         this.localizer = localizer;
-        imu = localizer.getIMU();
+       // imu = localizer.getIMU();
     }
 
     /**
@@ -70,7 +73,7 @@ public class PoseUpdater {
      */
     public PoseUpdater(HardwareMap hardwareMap) {
         // TODO: replace the second argument with your preferred localizer
-        this(hardwareMap, new ThreeWheelLocalizer(hardwareMap));
+        this(hardwareMap, new DriveEncoderLocalizer(hardwareMap));
     }
 
     /**
@@ -302,9 +305,9 @@ public class PoseUpdater {
      * This resets the heading of the robot to the IMU's heading, using Road Runner's pose reset.
      */
     public void resetHeadingToIMU() {
-        if (imu != null) {
-            localizer.setPose(new Pose(getPose().getX(), getPose().getY(), getNormalizedIMUHeading() + startingPose.getHeading()));
-        }
+//        if (imu != null) {
+//            localizer.setPose(new Pose(getPose().getX(), getPose().getY(), getNormalizedIMUHeading() + startingPose.getHeading()));
+//        }
     }
 
     /**
@@ -313,9 +316,9 @@ public class PoseUpdater {
      * method.
      */
     public void resetHeadingToIMUWithOffsets() {
-        if (imu != null) {
-            setCurrentPoseWithOffset(new Pose(getPose().getX(), getPose().getY(), getNormalizedIMUHeading() + startingPose.getHeading()));
-        }
+//        if (imu != null) {
+//            setCurrentPoseWithOffset(new Pose(getPose().getX(), getPose().getY(), getNormalizedIMUHeading() + startingPose.getHeading()));
+//        }
     }
 
     /**
@@ -324,9 +327,9 @@ public class PoseUpdater {
      * @return returns the normalized IMU heading.
      */
     public double getNormalizedIMUHeading() {
-        if (imu != null) {
-            return MathFunctions.normalizeAngle(-imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-        }
+//        if (imu != null) {
+//            return MathFunctions.normalizeAngle(-imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+//        }
         return 0;
     }
 

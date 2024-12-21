@@ -14,4 +14,6 @@ public class RobotConstants {
 
 public static final Pose bar = new Pose(10,10);
 
+public static final int maxArmPose = 10;
+public static final int minArmPose = -10;
 }

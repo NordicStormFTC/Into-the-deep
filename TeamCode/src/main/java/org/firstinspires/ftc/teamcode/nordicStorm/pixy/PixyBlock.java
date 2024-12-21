@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.nordicStorm;
+package org.firstinspires.ftc.teamcode.nordicStorm.pixy;
 
 public class PixyBlock {
     // 0, 1 0 sync (0xaa55)
