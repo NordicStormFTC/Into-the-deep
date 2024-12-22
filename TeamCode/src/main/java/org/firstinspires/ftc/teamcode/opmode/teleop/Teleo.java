@@ -1,48 +1,58 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.PoseUpdater;
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.localizers.ThreeWheelLocalizer;
+import org.firstinspires.ftc.teamcode.nordicStorm.langskip.Langskip;
 
-@TeleOp
 @Config
+@TeleOp
 public class Teleo extends LinearOpMode {
-    private PoseUpdater poseUpdater;
+    private Langskip langskip;
 
-    private DcMotorEx deadWheel;
+    public static double elbow;
+    public static double wrist;
+    public static double arm;
 
+    private Servo servo;
     @Override
     public void runOpMode() throws InterruptedException {
-        ThreeWheelLocalizer localizer = new ThreeWheelLocalizer(hardwareMap);
+        langskip = new Langskip(this.hardwareMap);
 
-        deadWheel = hardwareMap.get(DcMotorEx.class, "par1");
+        boolean doGPDrive = true;
 
+        langskip.visionSubsystem.setLimelightDriveController(0.001,0,0.1,0.001);
+        langskip.visionSubsystem.setLimelightRotationControllerdouble(0.001,0,0.1,0.001);
+        //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        servo = hardwareMap.get(Servo.class, "elbow");
         waitForStart();
-        while(opModeIsActive()){
-            poseUpdater = new PoseUpdater(hardwareMap, localizer);
-            poseUpdater.update();
-            telemetry.addData("Encoderex lives?", deadWheel.getVelocity());
+        while (opModeIsActive()) {
+            langskip.armSubsystem.setArmPIDF(0.001,0,0.1,0.001);
 
-            if(poseUpdater == null){
-                telemetry.addLine("null localizer");
-            } else {
-                telemetry.addLine("not null localizer");
-            }
+//            langskip.armSubsystem.elbow.setPosition(elbow);
+//            langskip.armSubsystem.wrist.setPosition(wrist);
 
-            if(poseUpdater.getPose().equals(null)){
-                telemetry.addLine("Null x");
-            } else {
-                telemetry.addLine("not .equals null");
-            }
+           // telemetry.addData("elboq", servo.getPosition());
+//            telemetry.addData("wrist", langskip.armSubsystem.wrist.getPosition());
+//            telemetry.addData("elbow", langskip.armSubsystem.elbow.getPosition());
 
-            telemetry.addData("acceleration", poseUpdater.getAcceleration().getMagnitude());
-            telemetry.addData("X", poseUpdater.getPose().getX());
-            poseUpdater.update();
+//            if (gamepad1.right_trigger > 0.5) {
+//                doGPDrive = false;
+//                langskip.visionSubsystem.seeknDestroy(langskip.follower);
+//            } else if (gamepad1.right_trigger < 0.5) {
+//                doGPDrive = true;
+//            }
+
+
+            langskip.follower.setTeleOpMovementVectors(1, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+
             telemetry.update();
+            langskip.follower.update();
         }
+
     }
 }

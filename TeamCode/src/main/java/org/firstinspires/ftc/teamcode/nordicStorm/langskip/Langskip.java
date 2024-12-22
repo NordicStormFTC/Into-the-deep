@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.nordicStorm.langskip;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
@@ -12,18 +14,18 @@ import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
  */
 public class Langskip {
 
-    public final ArmSubsystem armSubsystem;
-
     public final VisionSubsystem visionSubsystem;
+
+    public final ArmSubsystem armSubsystem;
 
     public final Follower follower;
 
-    public Langskip(HardwareMap hardwareMap) {
+    public Langskip(@NonNull HardwareMap hardwareMap) {
+        follower = new Follower(hardwareMap);
 
         visionSubsystem = new VisionSubsystem(hardwareMap);
 
         armSubsystem = new ArmSubsystem(hardwareMap);
 
-        follower = new Follower(hardwareMap);
     }
 }

@@ -58,8 +58,8 @@ public class BlueSampleSide extends OpMode {
         opmodeTimer.resetTimer();
 
         langskip = new Langskip(hardwareMap);
-        langskip.follower.setStartingPose(startPose);
-        langskip.armSubsystem.setArmPIDF(0.01,0,0.01,0.01);
+       // langskip.follower.setStartingPose(startPose);
+       // langskip.armSubsystem.setArmPIDF(0.01,0,0.01,0.01);
         buildPaths();
     }
 
@@ -90,8 +90,7 @@ public class BlueSampleSide extends OpMode {
 
                 if (true) {
                     //do thing
-                    langskip.armSubsystem.setTarget(10);
-                    langskip.follower.setPose(new Pose(langskip.visionSubsystem.getX(), langskip.visionSubsystem.getY()));
+                    //langskip.armSubsystem.setTarget(10);
                     setPathState(2);
                 }
                 break;
@@ -134,18 +133,18 @@ public class BlueSampleSide extends OpMode {
     @Override
     public void loop() {
 
-        langskip.armSubsystem.runArm();
+        //langskip.armSubsystem.runArm();
        
         // These loop the movements of the robot
-        langskip.follower.update();
-        autonomousPathUpdate();
-
-
-        // Feedback to Driver Hub
-        telemetry.addData("path state", pathState);
-        telemetry.addData("x", langskip.follower.getPose().getX());
-        telemetry.addData("y", langskip.follower.getPose().getY());
-        telemetry.addData("heading", langskip.follower.getPose().getHeading());
+//        langskip.follower.update();
+//        autonomousPathUpdate();
+//
+//
+//        // Feedback to Driver Hub
+//        telemetry.addData("path state", pathState);
+//        telemetry.addData("x", langskip.follower.getPose().getX());
+//        telemetry.addData("y", langskip.follower.getPose().getY());
+//        telemetry.addData("heading", langskip.follower.getPose().getHeading());
         telemetry.update();
     }
 
