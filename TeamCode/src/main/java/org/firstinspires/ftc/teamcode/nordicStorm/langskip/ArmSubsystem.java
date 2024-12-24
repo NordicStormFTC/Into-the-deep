@@ -43,7 +43,7 @@ public class ArmSubsystem extends VisionSubsystem {
         super(hardwareMap);
 
         arm = hardwareMap.get(DcMotor.class, "arm");
-        wrist = hardwareMap.get(Servo.class, "grabby");
+        wrist = hardwareMap.get(Servo.class, "wrist");
         elbow = hardwareMap.get(Servo.class, "elbow");
 
         armPIDF = new PIDFController(new CustomPIDFCoefficients(0, 0, 0, 0));

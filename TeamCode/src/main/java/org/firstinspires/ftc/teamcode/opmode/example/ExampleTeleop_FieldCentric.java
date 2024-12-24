@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
  * @version 2.0, 11/28/2024
  */
 
-@TeleOp(name = "Example Field-Centric Teleop", group = "Examples")
+@TeleOp
 public class ExampleTeleop_FieldCentric extends OpMode {
     private Follower follower;
     private final Pose startPose = new Pose(0,0,0);
@@ -48,7 +48,7 @@ public class ExampleTeleop_FieldCentric extends OpMode {
         */
 
 
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, false);
+        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, 0, false);
         follower.update();
 
         /* Open claw on Left Bumper Press */

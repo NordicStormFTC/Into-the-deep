@@ -20,4 +20,8 @@ public static final int minArmPose = -10;
     static final double length1 = 10;
     static final double length2 = 10;
     static final double length3 = 10;
+
+    public static final double restingWrist = 0.71;
+    public static double restingElbow = 0.71;
+
 }

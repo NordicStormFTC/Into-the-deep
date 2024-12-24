@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmode.example;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.nordicStorm.langskip.Langskip;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
 /**
  * This is an example teleop that showcases movement and control of two servos and robot-centric driving.
@@ -11,17 +13,26 @@ import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
  * @author Baron Henderson - 20077 The Indubitables
  * @version 2.0, 11/28/2024
  */
-
-@TeleOp(name = "Example Robot-Centric Teleop", group = "Examples")
+@Config
+@TeleOp
 public class ExampleTeleop_RobotCentric extends OpMode {
-    private Follower follower;
+    private Langskip langskip;
     private final Pose startPose = new Pose(0,0,0);
+
+    public static double dp =0;
+    public static double di =0;
+    public static double dd =0;
+    public static double df=0;
+    public static double rp=0;
+    public static double ri=0;
+    public static double rd=0;
+    public static double rf=0;
 
     /** This method is call once when init is played, it initializes the follower and subsystems **/
     @Override
     public void init() {
-        follower = new Follower(hardwareMap);
-        follower.setStartingPose(startPose);
+      langskip = new Langskip(hardwareMap);
+        langskip.follower.setStartingPose(startPose);
 
     }
 
@@ -33,13 +44,26 @@ public class ExampleTeleop_RobotCentric extends OpMode {
     /** This method is called once at the start of the OpMode. **/
     @Override
     public void start() {
-        follower.startTeleopDrive();
+        langskip.follower.startTeleopDrive();
     }
 
     /** This is the main loop of the opmode and runs continuously after play **/
     @Override
     public void loop() {
+        langskip.visionSubsystem.setLimelightDriveController(dp,di,dd,df);
+        langskip.visionSubsystem.setLimelightRotationController(rp,ri,rd,rf);
 
+        if(langskip.visionSubsystem.getResults().isValid()){
+            telemetry.addData("tx", langskip.visionSubsystem.getResults().getTx());
+        }
+        telemetry.addData("VAKLID", langskip.visionSubsystem.getResults().isValid());
+
+        if(gamepad1.a){
+            langskip.visionSubsystem.seeknDestroy(langskip.follower);
+        } else if(
+                !gamepad1.a){
+            langskip.follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, 0, true);
+        }
         /* Update Pedro to move the robot based on:
         - Forward/Backward Movement: -gamepad1.left_stick_y
         - Left/Right Movement: -gamepad1.left_stick_x
@@ -48,8 +72,7 @@ public class ExampleTeleop_RobotCentric extends OpMode {
         */
 
 
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
-        follower.update();
+        langskip.follower.update();
 
         /* Open claw on Left Bumper Press */
         if (gamepad1.left_bumper) {
@@ -82,9 +105,9 @@ public class ExampleTeleop_RobotCentric extends OpMode {
         */
 
         /* Telemetry Outputs of our Follower */
-        telemetry.addData("X", follower.getPose().getX());
-        telemetry.addData("Y", follower.getPose().getY());
-        telemetry.addData("Heading in Degrees", Math.toDegrees(follower.getPose().getHeading()));
+        telemetry.addData("X", langskip.follower.getPose().getX());
+        telemetry.addData("Y", langskip.follower.getPose().getY());
+        telemetry.addData("Heading in Degrees", Math.toDegrees(langskip.follower.getPose().getHeading()));
 
         /* Telemetry Outputs of our ClawSubsystem */
 

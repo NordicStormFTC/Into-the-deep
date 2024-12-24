@@ -10,7 +10,7 @@
                 |                                                    |
                 |                                                    |
                 |                                                    |
-                |       "par1"                "par2"                 |
+                |        "par1"                "par2"                 |
                 |       EH port 0           EH port 1                |
                 |                                                    |
                 |                "perp" EH port 2                    |

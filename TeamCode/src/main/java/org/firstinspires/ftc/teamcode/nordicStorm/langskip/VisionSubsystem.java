@@ -5,9 +5,7 @@ import androidx.annotation.NonNull;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-import org.firstinspires.ftc.teamcode.nordicStorm.pixy.PixyCam;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.CustomPIDFCoefficients;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDFController;
@@ -41,11 +39,16 @@ public class VisionSubsystem {
         limelightRotationController.setTargetPosition(0);
     }
 
+    public LLResult getResults(){
+        results = limeLight.getLatestResult();
+        return results;
+    }
+
     public void setLimelightDriveController(double p, double i, double d, double f) {
         limelightDriveController = new PIDFController(new CustomPIDFCoefficients(p, i, d, f));
     }
 
-    public void setLimelightRotationControllerdouble(double p, double i, double d, double f) {
+    public void setLimelightRotationController(double p, double i, double d, double f) {
         limelightRotationController = new PIDFController(new CustomPIDFCoefficients(p, i, d, f));
     }
 
@@ -55,15 +58,17 @@ public class VisionSubsystem {
      */
 
     public void seeknDestroy(@NonNull Follower follower) {
-        double rotationError = results.getTx();
-        double driveError = -results.getTy();
+        if(results != null){
+            double rotationError = getResults().getTx();
+            double driveError = -getResults().getTy();
 
-        limelightRotationController.updatePosition(rotationError);
-        limelightDriveController.updatePosition(driveError);
+            limelightRotationController.updatePosition(rotationError);
+            limelightDriveController.updatePosition(driveError);
 
-        double rotationPower = limelightRotationController.runPIDF();
-        double drivePower = limelightDriveController.runPIDF();
+            double rotationPower = limelightRotationController.runPIDF();
+            double drivePower = limelightDriveController.runPIDF();
 
-        follower.setTeleOpMovementVectors(drivePower, 0, rotationPower, true);
+            follower.setTeleOpMovementVectors(drivePower, 0, rotationPower, true);
+        }
     }
 }
