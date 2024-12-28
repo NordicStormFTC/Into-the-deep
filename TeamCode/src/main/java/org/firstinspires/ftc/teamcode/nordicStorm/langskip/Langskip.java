@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 
 /**
  * The goal here is to have only one robot info class instantiated
@@ -19,6 +20,8 @@ public class Langskip {
     public final ArmSubsystem armSubsystem;
 
     public final Follower follower;
+
+    public final Pose startPose = new Pose(0,0,0);
 
     public Langskip(@NonNull HardwareMap hardwareMap) {
         follower = new Follower(hardwareMap);

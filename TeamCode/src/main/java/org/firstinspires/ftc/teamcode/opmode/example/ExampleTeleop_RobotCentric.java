@@ -32,7 +32,7 @@ public class ExampleTeleop_RobotCentric extends OpMode {
     @Override
     public void init() {
       langskip = new Langskip(hardwareMap);
-        langskip.follower.setStartingPose(startPose);
+      langskip.follower.setStartingPose(startPose);
 
     }
 
@@ -53,13 +53,13 @@ public class ExampleTeleop_RobotCentric extends OpMode {
         langskip.visionSubsystem.setLimelightDriveController(dp,di,dd,df);
         langskip.visionSubsystem.setLimelightRotationController(rp,ri,rd,rf);
 
-        if(langskip.visionSubsystem.getResults().isValid()){
-            telemetry.addData("tx", langskip.visionSubsystem.getResults().getTx());
-        }
-        telemetry.addData("VAKLID", langskip.visionSubsystem.getResults().isValid());
+//        if(langskip.visionSubsystem.getResults().isValid()){
+//            telemetry.addData("tx", langskip.visionSubsystem.getResults().getTx());
+//        }
+//        telemetry.addData("VAKLID", langskip.visionSubsystem.getResults().isValid());
 
         if(gamepad1.a){
-            langskip.visionSubsystem.seeknDestroy(langskip.follower);
+            langskip.visionSubsystem.seeknDestroy(langskip.follower,telemetry);
         } else if(
                 !gamepad1.a){
             langskip.follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, 0, true);
