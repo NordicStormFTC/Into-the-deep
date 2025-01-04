@@ -63,10 +63,9 @@ public class ArmSubsystem extends VisionSubsystem {
      */
     public void setTargetTicks(double degrees) throws RuntimeException {
         armPIDF.reset();
-        degrees -= 30;
         targetTicks = degrees * ArmConstants.DEGREES_TO_TICKS;
 
-        if (degrees > ArmConstants.MAX_ARM_ANGLE || degrees < ArmConstants.MIN_ARN_ANGLE) {
+        if ((degrees) > ArmConstants.MAX_ARM_ANGLE || (degrees) < ArmConstants.MIN_ARN_ANGLE) {
             throw new RuntimeException("NO! BAD! The arm can only go from [" + ArmConstants.MIN_ARN_ANGLE + "," + ArmConstants.MAX_ARM_ANGLE + "]");
         } else {
             armPIDF.setTargetPosition(targetTicks);
@@ -102,7 +101,7 @@ public class ArmSubsystem extends VisionSubsystem {
     public void setArmPIDF(double p, double i, double d, double f) throws RuntimeException {
         double[] pidCoefficients = {p, i, d, f};
         /*
-         * checks for any silly mistakes
+         * checks for any silly tuning mistakes
          */
         for (double term : pidCoefficients) {
             if (term < 0) {
@@ -191,14 +190,15 @@ public class ArmSubsystem extends VisionSubsystem {
     }
     //-------------------------------
 
-    //-------------------------------deals with the optimzation of the joint angles
+   public void grabPiece(){
+   }
 
     public static class ArmConstants {
         public static final double GOBUILDA_ENCODER_RESOLUTION = 751.8;
         public static final double GOBUILDA_INTERNAL_GEAR_RATIO = (double) 9 / 26;
         public static final double ARM_BELTING_RATIO = 3;
 
-        public static final int RESTING_ARM_ANGLE = 30; // in degrees
+        public static final int RESTING_ARM_ANGLE = 0; // in degrees
 
         public static final double TICKS_PER_REVOLUTION = (GOBUILDA_ENCODER_RESOLUTION * GOBUILDA_INTERNAL_GEAR_RATIO) * ARM_BELTING_RATIO * 3;//why 3?? I dont understand qwjnrfpiqenrglxkjqwnrxg;ljqwn rgl;knqoirgi
         //(751.8 * 9/26) * 3/3;
@@ -207,7 +207,7 @@ public class ArmSubsystem extends VisionSubsystem {
         public static final double DEGREES_TO_TICKS = (TICKS_PER_REVOLUTION / 360);
 
         public static final double MAX_ARM_ANGLE = 180;
-        public static final double MIN_ARN_ANGLE = 30;
+        public static final double MIN_ARN_ANGLE = 0;
 
         static final double length1 = 10;
         static final double length2 = 10;

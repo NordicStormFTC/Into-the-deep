@@ -24,4 +24,7 @@ public class PixyBlock {
     public int centerY;
     public int width;
     public int height;
+    public int angle;
+    public int trackingIndex;
+    public int age;
 }

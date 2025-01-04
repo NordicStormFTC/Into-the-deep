@@ -18,8 +18,8 @@ import java.util.ArrayList;
  * https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/Writing-an-I2C-Driver
  **/
 
-@I2cDeviceType
-@DeviceProperties(name = "Pixy2 Smart Camera", description = "Pixy2 Smart Camera", xmlTag = "MCP9808")
+//@I2cDeviceType
+//@DeviceProperties(name = "Pixy2 Smart Camera", description = "Pixy2 Smart Camera", xmlTag = "MCP9808")
 public class PixyCam extends I2cDeviceSynchDeviceWithParameters<I2cDeviceSynch, PixyCam.PixyCamParams> {
 
 
@@ -56,19 +56,14 @@ public class PixyCam extends I2cDeviceSynchDeviceWithParameters<I2cDeviceSynch, 
      * @return an updated list of all "pixy block" objects registered by the camera
      */
     public ArrayList<PixyBlock> read() {
-
-        /// this clears the results of stale blocks
         detectedBlocks.clear();
         //detectedBlocks = new ArrayList<>();
 
-        /// pixy2 has 26 bytes for us to read through
         byte[] bytes = new byte[26];
 
-        /// this sets the I2C device, in this case pixys, read window.
         I2cDeviceSynch.ReadWindow readWindow = new I2cDeviceSynch.ReadWindow(0, bytes.length, I2cDeviceSynch.ReadMode.ONLY_ONCE);
         this.deviceClient.setReadWindow(readWindow);
 
-        ///now we read through the bytes
         bytes = this.deviceClient.read(readWindow.getRegisterFirst(), readWindow.getRegisterCount());
 
         int index = 0;
@@ -104,12 +99,10 @@ public class PixyCam extends I2cDeviceSynchDeviceWithParameters<I2cDeviceSynch, 
             if (b1 == 0x55 && b2 == 0xaa) {
                 // copy block into temp buffer
                 byte[] temp = new byte[BLOCK_SIZE];
-                StringBuilder sb = new StringBuilder("Data : ");
+
                 for (int tempOffset = 0; tempOffset < BLOCK_SIZE; ++tempOffset) {
                     temp[tempOffset] = bytes[byteOffset + tempOffset];
-                    sb.append(temp[tempOffset] + ", ");
                 }
-
                 PixyBlock block = PixyUtils.bytesToBlock(temp);
 
                 //Added so blocks are only added if their signature is 1 to remove noise from signal
@@ -122,34 +115,6 @@ public class PixyCam extends I2cDeviceSynchDeviceWithParameters<I2cDeviceSynch, 
                 ++byteOffset;
         }
 
-
-        if (detectedBlocks.size() >= 2) {
-            PixyBlock leftBlock;
-            PixyBlock rightBlock;
-            if (detectedBlocks.get(0).centerX > detectedBlocks.get(1).centerX) {
-                leftBlock = detectedBlocks.get(1);
-                rightBlock = detectedBlocks.get(0);
-            } else {
-                leftBlock = detectedBlocks.get(0);
-                rightBlock = detectedBlocks.get(1);
-            }
-//            double difference = (double) (rightBlock.centerX + leftBlock.centerX) / 2;
-//            setLastOffset(difference);
-//            double total = (rightBlock.centerX) - (leftBlock.centerX);
-//            getDistance(total, difference);
-
-
-//        else{
-//
-//            setLastOffset(160); //Keeps robot going straight if only one signal is picked up
-//
-
-//    } else{
-//        setLastOffset(160); //Keeps robot going straight if nothing is picked up
-//        setInRange(false);
-//    }
-
-        }
         return detectedBlocks;
     }
 
