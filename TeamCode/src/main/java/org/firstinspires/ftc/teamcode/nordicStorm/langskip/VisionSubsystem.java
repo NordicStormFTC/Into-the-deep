@@ -32,11 +32,8 @@ public class VisionSubsystem {
 
     private List<PixyBlock> pixyData = new ArrayList<>();
 
-    private PIDFController limelightDriveController;
-    private PIDFController limelightRotationController;
-
-    private PIDFController pixyDriveController;
-    private PIDFController pixyRotationController;
+    public final PIDFController limelightDriveController;
+    private final PIDFController limelightRotationController;
 
     /**
      * using a package private constructor to
@@ -45,62 +42,38 @@ public class VisionSubsystem {
      * @param hardwareMap publicly instantiate me in Langskip!
      */
 
-    VisionSubsystem(@NonNull HardwareMap hardwareMap) {
+    VisionSubsystem(@NonNull final HardwareMap hardwareMap) {
         limeLight = hardwareMap.get(Limelight3A.class, "lime");
 
-       // pixy = hardwareMap.get(PixyCam.class, "pixy");
+        // pixy = hardwareMap.get(PixyCam.class, "pixy");
 
         limeLight.pipelineSwitch(0);
 
         limeLight.start();
 
         limelightDriveController = new PIDFController(new CustomPIDFCoefficients(0.03, 0, 0.03, 0.001));
-        limelightRotationController = new PIDFController(new CustomPIDFCoefficients(0, 0, 0, 0));
+        limelightRotationController = new PIDFController(new CustomPIDFCoefficients(0.03, 0, 0.035, 0.001));
 
-        pixyDriveController = new PIDFController(new CustomPIDFCoefficients(0,0,0,0));
-        pixyRotationController = new PIDFController(new CustomPIDFCoefficients(0,0,0,0));
-
-        limelightDriveController.setTargetPosition(0);
+        limelightDriveController.setTargetPosition(-15);
         limelightRotationController.setTargetPosition(0);
     }
 
     /**
      * call this method in the loop of your opMode!
      */
-    public void updateCameras(){
+    public void updateCameras() {
         llResult = limeLight.getLatestResult();
         //pixyData = pixy.read();
     }
 
-    public LLResult getLLResult(){
+    public LLResult getLLResult() {
         updateCameras();
         return llResult;
     }
 
-    public List<PixyBlock> getPixyResults(){
+    public List<PixyBlock> getPixyResults() {
         updateCameras();
         return pixyData;
-    }
-
-    /**
-     * these next four methods are used to tune the alignment controls of the cameras.
-     * once a user has found the correct coefficients, they should mark the controllers
-     * as final, and instantiate them in the constructor, with their experimentally found coefficients.
-     */
-    public void setLimelightDriveController(double p, double i, double d, double f) {
-        limelightDriveController = new PIDFController(new CustomPIDFCoefficients(p, i, d, f));
-    }
-
-    public void setLimelightRotationController(double p, double i, double d, double f) {
-        limelightRotationController = new PIDFController(new CustomPIDFCoefficients(p, i, d, f));
-    }
-
-    public void setPixyDriveController(double p, double i, double d, double f){
-        pixyDriveController = new PIDFController(new CustomPIDFCoefficients(p,i,d,f));
-    }
-
-    public void setPixyRotationController(double p, double i, double d, double f){
-        pixyRotationController = new PIDFController(new CustomPIDFCoefficients(p,i,d,f));
     }
 
     /**
@@ -109,20 +82,35 @@ public class VisionSubsystem {
      */
 
     public void seeknDestroy(@NonNull Follower follower, Telemetry telemetry) {
-        updateCameras();
-        if (llResult.isValid()) {
+        if (getLLResult().isValid() && getLLResult().getStaleness() < 100) {
             double rotationError = llResult.getTx();
             double driveError = llResult.getTy();
 
             limelightRotationController.updatePosition(rotationError);
             limelightDriveController.updatePosition(driveError);
 
-            double rotationPower = limelightRotationController.runPIDF();
-            double drivePower = limelightDriveController.runPIDF();
             telemetry.addLine("Charging");
-            telemetry.addData("drive power", drivePower);
-            telemetry.addData("Drive error", driveError);
-            follower.setTeleOpMovementVectors(drivePower, 0, rotationPower, true);
+            telemetry.addData("tx", rotationError);
+            telemetry.addData("Ty", driveError);
+
+            double rotationPower = 0;
+            double drivePower = 0;
+
+            /*
+             * if the rotation error is within [-1, 1] we intentionally don't apply power
+             */
+            if (Math.abs(limelightRotationController.getError()) > 1) {
+                rotationPower = limelightRotationController.runPIDF();
+            }
+
+
+            if (Math.abs(limelightDriveController.getError()) > 0.5) {
+                drivePower = limelightDriveController.runPIDF();
+            }
+
+            telemetry.addData("Drive PID", limelightDriveController.getError());
+
+            follower.setTeleOpMovementVectors(-drivePower, 0, rotationPower, true);
         } else {
             telemetry.addLine("No valid results!");
         }

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
  * The goal here is to have only one robot info class instantiated
  * in our OpModes. Langskip means 'boat' in old norse, and publicly
  * contains all of our subsystems. Users should not instantiate
- * individual subsystems in OpModes.
+ * individual subsystems in OpModes and access them through langskip.
  */
 public class Langskip {
 
@@ -23,12 +23,15 @@ public class Langskip {
 
     public final Pose startPose = new Pose(0,0,0);
 
-    public Langskip(@NonNull HardwareMap hardwareMap) {
+    /**
+     *
+     * @param hardwareMap the hardware map for our subsystems to use. This provides the same instance of the hardware map to all subsystems
+     */
+    public Langskip(@NonNull final HardwareMap hardwareMap) {
         follower = new Follower(hardwareMap);
 
         visionSubsystem = new VisionSubsystem(hardwareMap);
 
         armSubsystem = new ArmSubsystem(hardwareMap);
-
     }
 }

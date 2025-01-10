@@ -1,68 +1,86 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.nordicStorm.alexsGoatedi2cPackage.GoatedI2cDeviceWrapper;
 import org.firstinspires.ftc.teamcode.nordicStorm.langskip.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.nordicStorm.langskip.Langskip;
-import org.firstinspires.ftc.teamcode.nordicStorm.pixy.I2C;
-import org.firstinspires.ftc.teamcode.nordicStorm.pixy.Pixy3;
-import org.firstinspires.ftc.teamcode.nordicStorm.pixy.PixyBlock;
-import org.firstinspires.ftc.teamcode.nordicStorm.pixy.PixyCam;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Config
 @TeleOp
 public class HardwareTesting extends LinearOpMode {
 
-//    GoatedI2cDeviceWrapper wrapper;
-//    I2C i2C;
-//    Langskip langskip;
 
-    Pixy3 pixy3;
-//    List<PixyBlock> blocks = new ArrayList<>();
-   // PixyBlock block;
-    //Servo servo;
     public static double servoPos;
+    public static double armPos;
+
+    public static boolean ARM_UP;
+    public static boolean ARM_DOWN;
+    public static boolean GRIP;
+
     @Override
     public void runOpMode() throws InterruptedException {
-//        wrapper = new GoatedI2cDeviceWrapper(hardwareMap, I2C.class);
 
+        Langskip langskip = new Langskip(hardwareMap);
 
-       // servo = hardwareMap.get(Servo.class, "elbow");
-        pixy3 = hardwareMap.get(Pixy3.class, "pixy3");
-        pixy3.requestSync();
+        langskip.follower.startTeleopDrive();
 
-        // langskip = new Langskip(hardwareMap);
-//        langskip.follower.setStartingPose(langskip.startPose);
-//        langskip.follower.startTeleopDrive();
-       // langskip.armSubsystem.setTargetTicks(90);
-       // langskip.armSubsystem.offset = langskip.armSubsystem.getAbsoluteArmTicks();
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
         waitForStart();
+
         while (opModeIsActive()) {
-            pixy3.readSync(telemetry);
-            //langskip.armSubsystem.runArm(telemetry);
-            //close .5
-            //servo.setPosition(.45);
-//            if(gamepad1.right_trigger > 0.6){
-//
-//            } else if(gamepad1.right_trigger < 0.6){
-//                servo.setPosition(.5);
+
+            langskip.armSubsystem.wrist.setPosition(ArmSubsystem.ArmConstants.WRIST_DOWN);
+            //langskip.visionSubsystem.setLimelightDriveController();
+//            if (gamepad1.a) {
+//                langskip.armSubsystem.elbow.setPosition(ArmSubsystem.ArmConstants.ELBOW_UP);
 //            }
-            //pixy3.updateBlock(telemetry);
-          // block = pixy3.getBlock(telemetry);
-           //telemetry.addData("X", blocks.get(1).centerX);
-//            langskip.armSubsystem.elbow.setPosition(servoPos);
+//            if (gamepad1.b) {
+//                langskip.armSubsystem.elbow.setPosition(ArmSubsystem.ArmConstants.ELBOW_DOWN);
+//            }
+//            if (gamepad1.right_trigger > .5) {
+//                langskip.armSubsystem.setTarget(90);
+//            }
+//            if (gamepad1.left_trigger > .5) {
+//                langskip.armSubsystem.setTarget(180);
+//            }
+//            if (gamepad2.a) {
+//                langskip.armSubsystem.gripper.setPosition(ArmSubsystem.ArmConstants.GRIPPER_OPEN);
+//            }
+//            if (gamepad2.b) {
+//                langskip.armSubsystem.gripper.setPosition(ArmSubsystem.ArmConstants.GRIPPER_CLOSE);
+//            }
+            if(ARM_UP){
+                ARM_DOWN = false;
+                GRIP = false;
+                langskip.armSubsystem.foldInElbow();
+            }
+            if(ARM_DOWN){
+                ARM_UP = false;
+                GRIP = false;
+                langskip.armSubsystem.putDownElbow();
+            }
+            if(GRIP) {
+                ARM_UP = false;
+                ARM_DOWN = false;
+               langskip.armSubsystem.grabPiece();
+            }
 //
-//            telemetry.addData("Target in ticks", langskip.armSubsystem.targetTicks);
-//            telemetry.addData("current angle", langskip.armSubsystem.getArmAngle());
-//            telemetry.addData("Ticks", langskip.armSubsystem.getArmPositionTicks());
-//            telemetry.addData("Ticks converted to degrees", langskip.armSubsystem.getArmPositionTicks() * ArmSubsystem.ArmConstants.TICKS_TO_DEGREES);
+//            langskip.armSubsystem.runArm(telemetry);
+
+
+            if(gamepad1.left_trigger > 0.5){
+                langskip.visionSubsystem.seeknDestroy(langskip.follower, telemetry);
+            } else {
+                langskip.follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
+            }
+
+            langskip.follower.update();
+
             telemetry.update();
         }
     }

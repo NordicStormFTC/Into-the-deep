@@ -50,8 +50,8 @@ public class ExampleTeleop_RobotCentric extends OpMode {
     /** This is the main loop of the opmode and runs continuously after play **/
     @Override
     public void loop() {
-        langskip.visionSubsystem.setLimelightDriveController(dp,di,dd,df);
-        langskip.visionSubsystem.setLimelightRotationController(rp,ri,rd,rf);
+//        langskip.visionSubsystem.setLimelightDriveController(dp,di,dd,df);
+//        langskip.visionSubsystem.setLimelightRotationController(rp,ri,rd,rf);
 
 //        if(langskip.visionSubsystem.getResults().isValid()){
 //            telemetry.addData("tx", langskip.visionSubsystem.getResults().getTx());
