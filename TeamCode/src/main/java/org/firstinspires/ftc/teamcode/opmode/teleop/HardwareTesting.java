@@ -54,25 +54,30 @@ public class HardwareTesting extends LinearOpMode {
 //            if (gamepad2.b) {
 //                langskip.armSubsystem.gripper.setPosition(ArmSubsystem.ArmConstants.GRIPPER_CLOSE);
 //            }
-            if(ARM_UP){
-                ARM_DOWN = false;
-                GRIP = false;
-                langskip.armSubsystem.foldInElbow();
-            }
-            if(ARM_DOWN){
-                ARM_UP = false;
-                GRIP = false;
-                langskip.armSubsystem.putDownElbow();
-            }
-            if(GRIP) {
-                ARM_UP = false;
-                ARM_DOWN = false;
-               langskip.armSubsystem.grabPiece();
-            }
+
+            // right trigger open left trigger close
+            //a down and out
+            //y up/folded
+            //x low basket
+
 //
 //            langskip.armSubsystem.runArm(telemetry);
 
-
+            if(gamepad2.a){
+                langskip.armSubsystem.putDownElbow();
+            }
+            if(gamepad2.right_trigger > 0.5){
+                langskip.armSubsystem.openGripper();
+            }
+            if(gamepad2.left_trigger > 0.5){
+                langskip.armSubsystem.closeGripper();
+            }
+            if(gamepad2.y){
+                langskip.armSubsystem.foldInElbow();
+            }
+            if(gamepad2.x){
+                langskip.armSubsystem.setScoringPos(ArmSubsystem.ScoringPosition.LOW_BASKET);
+            }
             if(gamepad1.left_trigger > 0.5){
                 langskip.visionSubsystem.seeknDestroy(langskip.follower, telemetry);
             } else {
