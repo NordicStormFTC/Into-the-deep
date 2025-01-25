@@ -6,21 +6,19 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.nordicStorm.pixy.Pixy;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.CustomPIDFCoefficients;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.PIDFController;
 
-/**
- * The thought here is that the vision subsystem will produce data for the
- * hardware to react to. Hence the vision subsystem extends the main robot class 'Langskip'
- * and the arm subsystem inherits the data produced by the vision subsystem. The main
- * robot class carries only the subsystems to be used in opmodes, and holds no information
- * besides one object of each subsystem.
- */
-public class ArmSubsystem extends VisionSubsystem {
+public class PixyArm extends DriveTrain{
+
+    private final DcMotor elbowEncoder;
+
+    private final DcMotor wristEncoder;
 
     private final DcMotor arm;
 
-    private final double offset;
+    private final double armOffset;
 
     public final Servo wrist;
 
@@ -28,23 +26,17 @@ public class ArmSubsystem extends VisionSubsystem {
 
     private final Servo gripper;
 
+    private final Pixy pixy;
+
     private boolean elbowIsUp;
 
-    /**
-     * we use one class private PIDF to be used by the arm subsystem.
-     * again you could instantiate a new PIDF controller every OpMode
-     * you run your arm in, but this seems cleaner.
-     */
     private final PIDFController armPIDF;
 
-    /**
-     * using a package private constructor to
-     * maintain immutability. Publicly instantiate me as final in Langskip!
-     *
-     * @param hardwareMap hardware map for the arms motor and servos.
-     */
-    ArmSubsystem(final HardwareMap hardwareMap) {
+     PixyArm(final HardwareMap hardwareMap) {
         super(hardwareMap);
+
+        elbowEncoder = hardwareMap.get(DcMotor.class, "elbow encoder");
+        wristEncoder = hardwareMap.get(DcMotor.class, "wrist encoder");
 
         arm = hardwareMap.get(DcMotor.class, "arm");
 
@@ -52,53 +44,52 @@ public class ArmSubsystem extends VisionSubsystem {
         elbow = hardwareMap.get(Servo.class, "elbow");
         gripper = hardwareMap.get(Servo.class, "gripper");
 
-        arm.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        armPIDF = new PIDFController(new CustomPIDFCoefficients(0.0038, 0, 0.00095, 0.00012));
-
-        offset = arm.getCurrentPosition();
-
-        armPIDF.setTargetPosition(0);
+        pixy = hardwareMap.get(Pixy.class, "pixy");
 
         elbowIsUp = true;
+
+        armOffset = arm.getCurrentPosition();
+
+        arm.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        armPIDF = new PIDFController(new CustomPIDFCoefficients(0.0038, 0, 0.0007, 0.00012));
+
+        armPIDF.setTargetPosition(0);
     }
 
-    public void setScoringPos(ScoringPosition scoringPosition) {
-        if (scoringPosition == ScoringPosition.LOW_BASKET) {
-            foldInElbow();
-            setTarget(95);
-            wrist.setPosition(0.055);
-        }
+    public synchronized void setScoringPos(final ArmConstants.ScoringPosition scoringPosition) {
+        setTarget(105);
+        elbow.setPosition(0.5);
+        wrist.setPosition(.68);
     }
 
-    public void putDownElbow() {
+    public synchronized void putDownArm() {
+        elbow.setPosition(ArmConstants.ELBOW_UP);
+        setTarget(30);
+        setTarget(0);
+    }
+
+    public synchronized void putDownElbow() {
         if (elbowIsUp) {
-            wrist.setPosition(ArmConstants.WRIST_STRAIGHT + 0.01);
+            wrist.setPosition(0.48);
             elbow.setPosition(ArmConstants.ELBOW_DOWN);
             elbowIsUp = false;
         }
     }
 
-    public void foldInElbow() {
+    public synchronized void foldInElbow() {
         if (!elbowIsUp) {
-            wrist.setPosition(ArmConstants.WRIST_DOWN);
+            wrist.setPosition(0.5);
             elbow.setPosition(ArmConstants.ELBOW_UP);
             elbowIsUp = true;
         }
     }
 
-    public void grabPiece() {
-        putDownElbow();
-        openGripper();
-        wrist.setPosition(ArmConstants.WRIST_GRAB);
-        closeGripper();
-    }
-
-    public void openGripper() {
+    public synchronized void openGripper() {
         gripper.setPosition(ArmConstants.GRIPPER_OPEN);
     }
 
-    public void closeGripper() {
+    public synchronized void closeGripper() {
         gripper.setPosition(ArmConstants.GRIPPER_CLOSE);
     }
 
@@ -161,37 +152,7 @@ public class ArmSubsystem extends VisionSubsystem {
     }
 
     private double getArmPositionTicks() {
-        return arm.getCurrentPosition() - offset;
+        return arm.getCurrentPosition() - armOffset;
     }
 
-    public static final class ArmConstants {
-
-        public static final double GOBUILDA_ENCODER_RESOLUTION = 751.8;
-        public static final double GOBUILDA_INTERNAL_GEAR_RATIO = (double) 9 / 26;
-        public static final double ARM_BELTING_RATIO = 3;
-
-        public static final double TICKS_PER_REVOLUTION = (GOBUILDA_ENCODER_RESOLUTION * GOBUILDA_INTERNAL_GEAR_RATIO) * ARM_BELTING_RATIO * 3;//why 3?? I dont understand! qwjnrfpiqenrglxkjqwnrxg;ljqwn rgl;knqoirgi
-
-        public static final double TICKS_TO_DEGREES = (360 / TICKS_PER_REVOLUTION);
-        public static final double DEGREES_TO_TICKS = (TICKS_PER_REVOLUTION / 360);
-
-        public static final double MAX_ARM_ANGLE = 180;
-        public static final double MIN_ARN_ANGLE = 0;
-
-        public static final double ELBOW_UP = 0;
-        public static final double ELBOW_DOWN = 1;
-
-        public static final double GRIPPER_CLOSE = 1;
-        public static final double GRIPPER_OPEN = 0;
-
-        //---------- Every 0.01 is like a sixth of a rotation on the wrist
-        public static final double WRIST_DOWN = 0; // this is also the position used when folding in the elbow
-        public static final double WRIST_STRAIGHT = 0.03;
-        public static final double WRIST_GRAB = 0.02;
-    }
-
-    public enum ScoringPosition {
-        CLIP,
-        LOW_BASKET
-    }
 }

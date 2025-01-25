@@ -1,21 +1,8 @@
 package org.firstinspires.ftc.teamcode.nordicStorm.pixy;
 
-public class PixyBlock {
-    // 0, 1 0 sync (0xaa55)
-    // 2, 3 1 checksum (sum of all 16-bit words 2-6)
-    // 4, 5 2 signature number
-    // 6, 7 3 x center of object
-    // 8, 9 4 y center of object
-    // 10, 11 5 width of object
-    // 12, 13 6 height of object
+import androidx.annotation.NonNull;
 
-    // read byte : 85 read byte : -86
-    // read byte : 85 read byte : -86
-    // read byte : 22 read byte : 1
-    // read by
-    // read byte : -128 read byte : 0
-    // read byte : 118 read byte : 0
-    // read byte : 22 read byte : 0
+public class PixyBlock {
 
     public int sync;
     public int checksum;
@@ -27,4 +14,13 @@ public class PixyBlock {
     public int angle;
     public int trackingIndex;
     public int age;
+
+    public boolean isValid(){
+        return true;
+    }
+
+    @NonNull
+    public String toString(){
+        return "[ signature: " + signature + "\ncenterX: " + centerX + "\ncenterY: " + centerY + "\nwidth: " + width + "\nheight: " + height + "\nage: " + age + " ]";
+    }
 }

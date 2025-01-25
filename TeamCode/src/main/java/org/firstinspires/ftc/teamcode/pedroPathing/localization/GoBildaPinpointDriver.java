@@ -207,7 +207,7 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
      * @param bytes the byte array to write
      */
     private void writeByteArray (Register reg, byte[] bytes){
-        deviceClient.write(reg.bVal,bytes);
+        deviceClient.write(reg.bVal, bytes);
     }
 
     /**
@@ -507,7 +507,5 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
                 AngleUnit.RADIANS,
                 hVelocity);
     }
-
-
 
 }

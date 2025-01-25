@@ -31,8 +31,8 @@ public class ExampleTeleop_RobotCentric extends OpMode {
     /** This method is call once when init is played, it initializes the follower and subsystems **/
     @Override
     public void init() {
-      langskip = new Langskip(hardwareMap);
-      langskip.follower.setStartingPose(startPose);
+      //langskip = new Langskip(hardwareMap);
+      //angskip.follower.setStartingPose(startPose);
 
     }
 
@@ -44,7 +44,7 @@ public class ExampleTeleop_RobotCentric extends OpMode {
     /** This method is called once at the start of the OpMode. **/
     @Override
     public void start() {
-        langskip.follower.startTeleopDrive();
+        //langskip.follower.startTeleopDrive();
     }
 
     /** This is the main loop of the opmode and runs continuously after play **/
@@ -59,10 +59,10 @@ public class ExampleTeleop_RobotCentric extends OpMode {
 //        telemetry.addData("VAKLID", langskip.visionSubsystem.getResults().isValid());
 
         if(gamepad1.a){
-            langskip.visionSubsystem.seeknDestroy(langskip.follower,telemetry);
+            //langskip.visionSubsystem.seeknDestroy(langskip.follower,telemetry);
         } else if(
                 !gamepad1.a){
-            langskip.follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, 0, true);
+            //langskip.follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, 0, true);
         }
         /* Update Pedro to move the robot based on:
         - Forward/Backward Movement: -gamepad1.left_stick_y
@@ -72,7 +72,7 @@ public class ExampleTeleop_RobotCentric extends OpMode {
         */
 
 
-        langskip.follower.update();
+        //langskip.follower.update();
 
         /* Open claw on Left Bumper Press */
         if (gamepad1.left_bumper) {
@@ -105,9 +105,9 @@ public class ExampleTeleop_RobotCentric extends OpMode {
         */
 
         /* Telemetry Outputs of our Follower */
-        telemetry.addData("X", langskip.follower.getPose().getX());
-        telemetry.addData("Y", langskip.follower.getPose().getY());
-        telemetry.addData("Heading in Degrees", Math.toDegrees(langskip.follower.getPose().getHeading()));
+//        telemetry.addData("X", langskip.follower.getPose().getX());
+//        telemetry.addData("Y", langskip.follower.getPose().getY());
+//        telemetry.addData("Heading in Degrees", Math.toDegrees(langskip.follower.getPose().getHeading()));
 
         /* Telemetry Outputs of our ClawSubsystem */
 
