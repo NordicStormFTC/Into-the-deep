@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
  * Hello! This file was written by Alexander W Bur of team 5962 Nordic Storm, on jan 20th 2025.
  */
 @I2cDeviceType
-@DeviceProperties(name = "Pixy2", description = "Pixy2 Smart Camera", xmlTag = "MCP9808")
+@DeviceProperties(name = "Pixy2", description = "Pixy2 Smart Camera", xmlTag = "MCP9808") // INCORRECT. This is the XML Tag for adafruit temp sensor!
 public class Pixy extends I2cDeviceSynchDevice<I2cDeviceSynchSimple> {
 
     /**

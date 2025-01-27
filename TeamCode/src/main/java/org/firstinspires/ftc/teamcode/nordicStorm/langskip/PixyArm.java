@@ -57,32 +57,12 @@ public class PixyArm extends DriveTrain{
         armPIDF.setTargetPosition(0);
     }
 
-    public synchronized void setScoringPos(final ArmConstants.ScoringPosition scoringPosition) {
-        setTarget(105);
-        elbow.setPosition(0.5);
-        wrist.setPosition(.68);
-    }
-
-    public synchronized void putDownArm() {
-        elbow.setPosition(ArmConstants.ELBOW_UP);
-        setTarget(30);
-        setTarget(0);
-    }
-
-    public synchronized void putDownElbow() {
-        if (elbowIsUp) {
-            wrist.setPosition(0.48);
-            elbow.setPosition(ArmConstants.ELBOW_DOWN);
-            elbowIsUp = false;
-        }
-    }
-
-    public synchronized void foldInElbow() {
-        if (!elbowIsUp) {
-            wrist.setPosition(0.5);
-            elbow.setPosition(ArmConstants.ELBOW_UP);
-            elbowIsUp = true;
-        }
+    public void foldInArm(){
+         if(elbowEncoder.getCurrentPosition() < 0){
+             elbow.setPosition(0.1);
+         } else {
+             elbow.setPosition(0.5);
+         }
     }
 
     public synchronized void openGripper() {
