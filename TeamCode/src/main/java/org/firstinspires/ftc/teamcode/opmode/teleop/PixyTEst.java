@@ -4,8 +4,12 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.nordicStorm.langskip.Langskip;
+import org.firstinspires.ftc.teamcode.nordicStorm.langskip.PixyArm;
+import org.firstinspires.ftc.teamcode.nordicStorm.pixy.Pixy;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.PoseUpdater;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.DashboardPoseTracker;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Drawing;
@@ -14,32 +18,20 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Drawing;
 public class PixyTEst extends LinearOpMode {
 
 
-    Langskip langskip;
-    private DashboardPoseTracker dashboardPoseTracker;
-
-
     @Override
     public void runOpMode() throws InterruptedException {
 
-        langskip = new Langskip(hardwareMap);
+//        Pixy pixy2 = hardwareMap.get(Pixy.class, "pixy");
+//        pixy2.turnOnLamps();
 
-        Drawing.drawRobot(langskip.driveTrain.getPosition(telemetry), "#4CAF50");
-        Drawing.sendPacket();
 
-//        FtcDashboard dashboard = FtcDashboard.getInstance();
-//
-//
-//        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
-//
-//        Drawing.drawRobot(langskip.driveTrain.getPosition(telemetry), "#4CAF50");
-//        Drawing.sendPacket();
+        DcMotor motor = hardwareMap.get(DcMotor.class, "motor");
+        Servo servo = hardwareMap.get(Servo.class, "servo");
         waitForStart();
 
         while (opModeIsActive()) {
-            langskip.driveTrain.updatePosition(telemetry);
-            telemetry.addData("x", langskip.driveTrain.getPosition(telemetry).getX());
-            telemetry.addData("y", langskip.driveTrain.getPosition(telemetry).getY());
-
+            motor.setPower(0.5);
+            servo.setPosition(0.75);
             telemetry.update();
 //            Drawing.drawPoseHistory(dashboardPoseTracker, "#4CAF50");
 //            Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");

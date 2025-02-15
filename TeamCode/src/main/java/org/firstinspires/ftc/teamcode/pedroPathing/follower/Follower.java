@@ -28,6 +28,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.nordicStorm.NordicPoseUpdater;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.PoseUpdater;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierPoint;
@@ -188,6 +189,10 @@ public class Follower {
 
         breakFollowing();
     }
+
+//    public Vector getPreviousVelocity(){
+//        //return poseUpdater.getPreviousVelocity();
+//    }
 
     /**
      * This sets the maximum power the motors are allowed to use.

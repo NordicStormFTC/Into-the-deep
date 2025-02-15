@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.nordicStorm.langskip;
 import androidx.annotation.NonNull;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -41,10 +42,14 @@ public class DriveTrain {
 
     public Pose position;
 
+    protected final OctoQuad octoquad;
+
     DriveTrain(final HardwareMap hardwareMap) {
         follower = new Follower(hardwareMap);
 
         limeLight = hardwareMap.get(Limelight3A.class, "lime");
+
+        octoquad = hardwareMap.get(OctoQuad.class, "octo");
 
         limeLight.pipelineSwitch(aprilTagPipeLine);
 
@@ -66,7 +71,7 @@ public class DriveTrain {
         return follower.getPose();
     }
 
-    public void seeknDestroy(final @NonNull Follower follower, final Telemetry telemetry) {
+    public void seeknDestroy(final Telemetry telemetry) {
         if (isRunningAprilTags) {
             limeLight.pipelineSwitch(blocksPipeLine);
             isRunningAprilTags = false;

@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration;
 
+import androidx.annotation.NonNull;
+
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import org.jetbrains.annotations.Contract;
 
 /**
  * This is the MathFunctions class. This contains many useful math related methods that I use in
@@ -144,6 +147,8 @@ public class MathFunctions {
      * @param two the second Pose
      * @return returns the sum of the two Pose.
      */
+    @NonNull
+    @Contract("_, _ -> new")
     public static Pose addPoses(Pose one, Pose two) {
         return new Pose(one.getX() + two.getX(), one.getY() + two.getY(), one.getHeading() + two.getHeading());
     }

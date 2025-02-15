@@ -106,9 +106,9 @@ public class Pixy extends I2cDeviceSynchDevice<I2cDeviceSynchSimple> {
         return combineBytes((byte) lower, (byte) upper);
     }
 
-    private boolean hasValidBlock() {
+    public boolean hasValidBlock() {
         updateBlock();
-        return pixyBlock.signature == 1 || pixyBlock.signature == 2;
+        return pixyBlock.signature == 1 || pixyBlock.signature == 2 || pixyBlock.signature == 3;
     }
 
     /**
@@ -166,7 +166,7 @@ public class Pixy extends I2cDeviceSynchDevice<I2cDeviceSynchSimple> {
     some data relayed by pixy doesn't fit in 1 byte, so we use this to combine
     two relevant bytes into one interpretable byte.
      */
-    public int combineBytes(byte lower, byte upper) {
+    private int combineBytes(byte lower, byte upper) {
         return (((int) upper & 0xff) << 8) | ((int) lower & 0xff);
     }
 

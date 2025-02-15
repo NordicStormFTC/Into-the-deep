@@ -18,6 +18,6 @@ public class EmptyBlock extends PixyBlock {
     }
 
     public String toString(){
-        return "";
+        return "null";
     }
 }
